@@ -3,8 +3,7 @@
 
 name:                tlv-parser
 version:             0.1.0.0
--- synopsis:
--- description:
+synopsis:            A simple BER-TLV parser
 license:             BSD3
 license-file:        LICENSE
 author:              Ryan Wang
@@ -14,12 +13,17 @@ build-type:          Simple
 extra-source-files:  ChangeLog.md
 cabal-version:       >=1.10
 
-executable tlv-parser
-  main-is:             Main.hs
-  -- other-modules:
-  -- other-extensions:
-  build-depends:       base >=4.9 && <4.10
-                       , bytestring
-                       , containers
+library
   hs-source-dirs:      src
+  exposed-modules:     TLV
+  build-depends:       base >=4.9 && <4.10
+  default-language:    Haskell2010
+
+test-suite tlv-parser-test
+  type:                exitcode-stdio-1.0
+  hs-source-dirs:      src, test
+  main-is:             Spec.hs
+  other-modules:       TLV
+  build-depends:       base >=4.9 && <4.10
+                       , hspec
   default-language:    Haskell2010
