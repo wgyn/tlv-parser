@@ -4,6 +4,17 @@ import TLV
 
 main :: IO ()
 main = hspec $ do
+  describe "parseTLVs" $ do
+    it "can parse a single TLV" $ do
+      let input = [0x5A, 0x01, 0x01]
+          expected = [([0x5A], [0x01])]
+      parseTLVs input `shouldBe` expected
+
+    it "can parse multiple concatenated TLVs" $ do
+      let input = [0x5A, 0x01, 0x01, 0x5B, 0x01, 0x01]
+          expected = [([0x5A], [0x01]), ([0x5B], [0x01])]
+      parseTLVs input `shouldBe` expected
+
   describe "parseTag" $ do
     it "can parse a 1-byte long tag" $ do
       let input = [0x57, 0x01, 0x01]
