@@ -1,5 +1,9 @@
 -- An implementation of BER-TLV parsing according to EMV Book 3, Annex B
-module TLV ( parseTag, parseTLVs ) where
+module TLV
+  ( parseTLVs
+  , byteAsBinary
+  , byteAsHex
+  ) where
 
 import Data.Bits
 import Data.Char (intToDigit)
@@ -42,8 +46,8 @@ parseValue :: Bytes -> Bytes -> (Bytes, Bytes)
 parseValue _ [] = ([], [])
 parseValue l xs = splitAt (fromIntegral $ head l) xs
 
-byteAsHex :: Byte -> String
-byteAsHex b = printf "%02s" (showHex b "")
-
 byteAsBinary :: Byte -> String
 byteAsBinary b = printf "%08s" (showIntAtBase 2 intToDigit b "")
+
+byteAsHex :: Byte -> String
+byteAsHex b = printf "%02s" (showHex b "")
