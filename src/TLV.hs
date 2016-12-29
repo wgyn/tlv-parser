@@ -36,15 +36,19 @@ parseTagSubsequentBytes acc (x:xs)
 
 -- | The length field (L) consists of one or more consecutive bytes. It
 -- indicates the length of the following field.
---
--- TODO: Need to handle lengths > 127 by checking first bit, per Section B2
-parseLength :: Bytes -> (Bytes, Bytes)
-parseLength [] = ([], [])
-parseLength (x:xs) = ([x .&. 0x7f], xs)
+parseLength :: Bytes -> (Byte, Bytes)
+parseLength [] = (0x00, [])
+parseLength (x:xs)
+  | (x .&. 0x80) == 0x80,
+    let nSubsequentBytes = fromIntegral (x .&. 0x7f)
+        (lengthBytes, rest) = splitAt nSubsequentBytes xs
+        loopByte acc byte = (shift acc 8) .|. byte
+  = (foldl loopByte 0x00 lengthBytes, rest)
+  | otherwise            = (x .&. 0x7f, xs)
 
-parseValue :: Bytes -> Bytes -> (Bytes, Bytes)
+parseValue :: Byte -> Bytes -> (Bytes, Bytes)
 parseValue _ [] = ([], [])
-parseValue l xs = splitAt (fromIntegral $ head l) xs
+parseValue l xs = splitAt (fromIntegral l) xs
 
 byteAsBinary :: Byte -> String
 byteAsBinary b = printf "%08s" (showIntAtBase 2 intToDigit b "")
